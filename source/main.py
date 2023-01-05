@@ -15,7 +15,8 @@ class Main:
 
     def mainLoop(self):
 
-        self.chessboard.create(self.screen)
+        self.chessboard.showBoard(self.screen)
+        self.chessboard.showPieces(self.screen)
 
         while True:
             for event in pygame.event.get():
