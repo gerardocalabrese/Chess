@@ -4,6 +4,7 @@ import pygame
 
 from square import Square
 from chesspiece import *
+from dragger import Dragger
 
 
 class ChessBoard:
@@ -12,6 +13,7 @@ class ChessBoard:
         self._createBoard()
         self._addChessPiece("white")
         self._addChessPiece("black")
+        self.dragger = Dragger()
 
     def showBoard(self, surface):
         for row in range(ROWS):
@@ -25,15 +27,16 @@ class ChessBoard:
                 pygame.draw.rect(surface,color,rect)
     
     def showPieces(self, surface):
-        print("entre a showpiece")
         for row in range(ROWS):
             for col in range (COLUMNS):
                 if self.squares[row][col].has_piece():
                     piece = self.squares[row][col].piece
-                    img = pygame.image.load(piece.texture)
-                    img_center = col*SQUARE_SIZE + SQUARE_SIZE//2, row*SQUARE_SIZE + SQUARE_SIZE//2
-                    piece.texture_rect = img.get_rect(center = img_center)
-                    surface.blit(img,piece.texture_rect)
+
+                    if piece is not self.dragger.piece:
+                        img = pygame.image.load(piece.texture)
+                        img_center = col*SQUARE_SIZE + SQUARE_SIZE//2, row*SQUARE_SIZE + SQUARE_SIZE//2
+                        piece.texture_rect = img.get_rect(center = img_center)
+                        surface.blit(img,piece.texture_rect)
     
     def _createBoard(self):
         for row in range (ROWS):
@@ -41,8 +44,7 @@ class ChessBoard:
                 self.squares[row][col]= Square(row,col)
 
     def _addChessPiece(self,team):
-        row_pawns, row_other_pieces = (6,7) if team == "white" else (0,1)
-        col_king, col_queen = (3,4) if team == "white" else (4,3)
+        row_pawns, row_other_pieces = (6,7) if team == "white" else (1,0)
 
         #adding pawns
         for col in range(COLUMNS):
@@ -61,12 +63,5 @@ class ChessBoard:
         self.squares[row_other_pieces][7] = Square(row_other_pieces, 7, Rook(team))
 
         #adding king and queen
-        self.squares[row_other_pieces][col_king] = Square(row_other_pieces, col_king, King(team))
-        self.squares[row_other_pieces][col_queen] = Square(row_other_pieces,col_queen, Queen(team))
-
-
-
-
-
-#board = ChessBoard()        
-#board.showPieces(None)
+        self.squares[row_other_pieces][4] = Square(row_other_pieces, 4, King(team))
+        self.squares[row_other_pieces][3] = Square(row_other_pieces, 3, Queen(team))
